@@ -30,6 +30,10 @@
 		{
 			"id": "a46372ff45bc5524",
 			"url": "/images/art/a46372ff45bc5524.jpg"
+		},
+		{
+			"id": "c2b9e1e85e8f55ab",
+			"url": "/images/art/c2b9e1e85e8f55ab.png"
 		}
 	],
 	"currentArtImageId": "a46372ff45bc5524",
@@ -37,9 +41,13 @@
 		{
 			"id": "",
 			"url": ""
+		},
+		{
+			"id": "08c15ffecad65a1d",
+			"url": "/images/background/08c15ffecad65a1d.jpg"
 		}
 	],
-	"currentBackgroundImageId": "",
+	"currentBackgroundImageId": "08c15ffecad65a1d",
 	"socialButtons": [
 		{
 			"id": "github",
@@ -70,7 +78,7 @@
 	"enableCategories": true,
 	"currentHatIndex": 3,
 	"hatFlipped": false,
-	"enableChristmas": true,
+	"enableChristmas": false,
 	"beian": {
 		"text": "",
 		"link": ""
