@@ -1,7 +1,7 @@
 {
 	"meta": {
-		"title": "fangqi",
-		"description": "方柒的个人博客，记录前端开发、探索、笔记。",
+		"title": "mobai",
+		"description": "末白 的个人博客，记录前端开发、探索、笔记。",
 		"username": "douzi"
 	},
 	"theme": {
@@ -44,16 +44,23 @@
 		{
 			"id": "github",
 			"type": "github",
-			"value": "https://github.com/qq1879446592-ui",
+			"value": "https://github.com/yysuni",
 			"label": "Github",
 			"order": 3
 		},
 		{
-			"id": "button-1769428362496",
+			"id": "juejin",
 			"type": "tiktok",
 			"value": "https://v.douyin.com/wuG9WKydwrI/",
-			"label": "抖音",
+			"label": "dy",
 			"order": 2
+		},
+		{
+			"id": "email",
+			"type": "email",
+			"value": "2285360379@qq.com",
+			"label": "",
+			"order": 1
 		}
 	],
 	"clockShowSeconds": false,
