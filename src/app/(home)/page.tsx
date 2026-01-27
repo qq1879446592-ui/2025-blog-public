@@ -83,7 +83,11 @@ export default function Home() {
 				{cardStyles.hiCard?.enabled !== false && <HiCard />}
 				{!maxSM && cardStyles.clockCard?.enabled !== false && <ClockCard />}
 				{!maxSM && cardStyles.calendarCard?.enabled !== false && <CalendarCard />}
-			    {cardStyles.musicPlayer?.enabled !== false && <MusicPlayer />}
+			    {cardStyles.musicPlayer?.enabled!== false && (
+                  <div style={{ margin: 0, padding: 0, lineHeight: 0, display: "inline-block" }}>
+                    <MusicPlayer />
+                  </div>
+                )}
 				{!maxSM && cardStyles.musicCard?.enabled !== false && <MusicCard />}
 				{cardStyles.socialButtons?.enabled !== false && <SocialButtons />}
 				{!maxSM && cardStyles.shareCard?.enabled !== false && <ShareCard />}
