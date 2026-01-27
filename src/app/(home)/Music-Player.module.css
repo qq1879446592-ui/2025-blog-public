@@ -1,0 +1,53 @@
+/* src/app/(home)/Music-Player.module.css */
+/* 播放器外层容器：匹配页面毛玻璃+圆角+阴影 */
+.playerContainer {
+  /* 毛玻璃核心效果（和页面板块一致） */
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  
+  /* 圆角/阴影：和页面卡片统一 */
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  
+  /* 间距：和其他板块对齐 */
+  padding: 16px;
+  margin: 16px 0;
+  
+  /* 雪顶定位基准 */
+  position: relative;
+  overflow: hidden;
+}
+
+/* 雪顶装饰（复刻页面板块的积雪效果） */
+.snowTop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 12px;
+  /* 雪顶的渐变+半透明，模拟积雪 */
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.8) 0%, 
+    rgba(255, 255, 255, 0.9) 50%, 
+    rgba(255, 255, 255, 0.8) 100%);
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  /* 轻微的不规则边缘，更像真实积雪 */
+  clip-path: polygon(0 0, 10% 8px, 20% 0, 30% 6px, 40% 0, 50% 8px, 60% 0, 70% 6px, 80% 0, 90% 8px, 100% 0);
+}
+
+/* iframe样式：去掉边框+透明背景 */
+.iframe {
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+}
+
+/* 移动端适配 */
+@media (max-width: 480px) {
+  .playerContainer {
+    margin: 12px;
+    padding: 12px;
+  }
+}
