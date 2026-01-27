@@ -32,15 +32,6 @@
 		"offsetY": null,
 		"enabled": true
 	},
-		"MusicPlayer": {
-		"width": 320,
-		"height": 65,
-		"offset": 120,
-		"order": 6,
-		"offsetX": null,
-		"offsetY": null,
-		"enabled": true
-	},
 	"musicCard": {
 		"width": 293,
 		"height": 66,
