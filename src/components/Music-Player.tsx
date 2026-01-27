@@ -1,5 +1,5 @@
-// src/components/MusicPlayer.tsx
-import React, { FC } from 'react';
+// src/components/Music-Player.tsx
+import MusicPlayer from '../components/Music-Player';
 
 // 定义组件属性类型（支持动态扩展）
 interface MusicPlayerProps {
@@ -38,4 +38,4 @@ const MusicPlayer: FC<MusicPlayerProps> = ({
   );
 };
 
-export default MusicPlayer;
+export default Music-Player;
