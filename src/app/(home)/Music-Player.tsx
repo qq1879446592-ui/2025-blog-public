@@ -1,43 +1,31 @@
-'use client';
-import React, { FC, useRef, useEffect } from 'react';
+// src/app/(home)/Music-Player.tsx
+'use client'; // 必须置顶的客户端指令
+import React from 'react';
+// 引入配套的样式文件（下面会创建）
+import styles from './Music-Player.module.css';
 
-interface MusicPlayerProps {
-  songId?: string;
-  width?: number | string;
-  height?: number | string;
-}
-
-const MusicPlayer: FC<MusicPlayerProps> = ({
-  songId = '106958339',
-  width = 320,
-  height = 65,
-}) => {
-  const isClient = typeof window !== 'undefined';
-  const iframeRef = useRef<HTMLIFrameElement>(null);
-
-  useEffect(() => {
-    if (iframeRef.current) {
-      iframeRef.current.src = `https://i.y.qq.com/v8/playsong.html?songid=${songId}&songtype=0#webchat_redirect`;
-    }
-  }, [songId]);
-
-  if (!isClient) return null;
-
+export default function MusicPlayer() {
+  // 仅在客户端渲染，避免服务端报错
+  if (typeof window === 'undefined') return null;
+  
   return (
-    <iframe
-      ref={iframeRef}
-      frameBorder="no"
-      border="0"
-      marginWidth="0"
-      marginHeight="0"
-      width={width}
-      height={height}
-      title="QQ音乐播放器"
-      loading="lazy"
-      src=""
-      style={{ border: 'none' }}
-    />
+    {/* 外层容器：匹配页面板块的毛玻璃+雪顶样式 */}
+    <div className={styles.playerContainer}>
+      {/* 雪顶装饰（和页面板块一致） */}
+      <div className={styles.snowTop}></div>
+      {/* QQ音乐播放器iframe */}
+      <iframe
+        frameBorder="no"
+        border="0"
+        marginWidth="0"
+        marginHeight="0"
+        width="100%"
+        height="65px"
+        title="QQ音乐播放器"
+        // 你的QQ音乐播放链接
+        src="https://i.y.qq.com/v8/playsong.html?songid=106958339&songtype=0#webchat_redirect"
+        className={styles.iframe}
+      />
+    </div>
   );
-};
-
-export default MusicPlayer; // 必加！默认导出
+}
