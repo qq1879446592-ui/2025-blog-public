@@ -36,38 +36,29 @@ const htmlStyle = {
 	'--color-article': theme.colorArticle
 }
 
-export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-	return (
-		<html lang='en' suppressHydrationWarning style={htmlStyle}>
-			<Head />
-
-			<body>
-				<script
-					dangerouslySetInnerHTML={{
-						__html: `
-					if (/windows|win32/i.test(navigator.userAgent)) {
-						document.documentElement.classList.add('windows');
-					}
-		      `
-					}}
-				/>
-
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <html lang="zh-CN">
+    <html lang="zh-CN" suppressHydrationWarning style={htmlStyle}>
+      <Head />
       <body>
-        {/* 1. 全局显示播放器（比如放在导航/页脚位置） */}
         <div style={{ margin: '20px 0', textAlign: 'center' }}>
           <MusicPlayer width={320} height={65} />
         </div>
 
-        {/* 2. 页面主体内容（所有页面都会嵌套在这里） */}
-        {children}
-					}
-				/>
-		  
-				<Layout>{children}</Layout>
-			</body>
-		</html>
-	);
-}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if (window.navigator.userAgent.includes('Windows')) {
+                document.documentElement.classList.add('windows');
+              }
+            `,
+          }}
+        />
+
+        <Layout>{children}</Layout>
+      </body>
+    </html>
