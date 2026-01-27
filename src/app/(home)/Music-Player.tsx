@@ -1,4 +1,5 @@
-import React, { FC } from 'react';
+import React, { FC, useRef, useEffect } from 'react';
+
 import './MusicPlayer.css'; // 可选：引入独立的样式文件
 
 // 定义播放器组件的属性类型（当前无自定义属性，可扩展）
