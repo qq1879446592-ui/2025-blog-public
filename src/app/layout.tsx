@@ -4,6 +4,7 @@ import type { Metadata } from 'next'
 import Layout from '@/layout'
 import Head from '@/layout/head'
 import siteContent from '@/config/site-content.json'
+import MusicPlayer from '@/(home)/Music-Player';
 
 const {
 	meta: { title, description },
@@ -51,11 +52,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 					}}
 				/>
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="zh-CN">
       <body>
@@ -66,7 +63,9 @@ export default function RootLayout({
 
         {/* 2. 页面主体内容（所有页面都会嵌套在这里） */}
         {children}
-
+					}
+				/>
+		  
 				<Layout>{children}</Layout>
 			</body>
 		</html>
