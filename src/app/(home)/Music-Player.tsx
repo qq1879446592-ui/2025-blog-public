@@ -54,14 +54,14 @@ export default function MusicPlayer() {
   // 仅在客户端渲染
   if (typeof window === 'undefined') return null;
 
-  return (
-    {/* 外层毛玻璃+雪顶容器（和图二页面一致） */}
-    <div className={styles.playerContainer}>
-      {/* 雪顶装饰（复刻图二积雪） */}
-      <div className={styles.snowTop}></div>
-
-      {/* 核心：1:1复刻截图里的播放器样式 */}
-      <div className={styles.qqPlayer}>
+return (
+  {/* 外层毛玻璃+雪顶容器（和图二页面一致） */}
+  <div className={styles.playerContainer}>
+    {/* 雪顶装饰（复刻图二积雪） */}
+    <div className={styles.snowTop}></div>
+    
+    {/* 核心：1:1复刻截图里的播放器样式 */}
+    <div className={styles.qqPlayer}>
         {/* 左侧封面+播放按钮 */}
         <div className={styles.coverBox} onClick={togglePlay}>
           <img src={SONG_CONFIG.cover} alt="歌曲封面" className={styles.cover} />
