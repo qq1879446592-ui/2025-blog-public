@@ -51,25 +51,19 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 					}}
 				/>
 
-export default function RootLayout({children,}: {children: React.ReactNode;}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="zh-CN">
 		<Head />
-		
         <body>
             {/* 全局导航/头部 */}
             <header>导航栏</header>
-        
-            {/* 全局音乐播放器 */}
             <MusicPlayer width={320} height={65} />
-        
-            {/* 页面主体内容 */}
             <main>{children}</main>
         
-            {/* 全局页脚 */}
 		  
 				<Layout>{children}</Layout>
 			</body>
 		</html>
-	)
+	);
 }
