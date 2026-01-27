@@ -1,4 +1,4 @@
-// src/app/(home)/Music-Player.tsx
+'use client';
 import React, { FC, useRef, useEffect } from 'react';
 
 interface MusicPlayerProps {
