@@ -1,6 +1,7 @@
 /* src/app/(home)/Music-Player.module.css */
-/* 外层容器：保留毛玻璃，删除雪顶 */
+/* 播放器外层容器：毛玻璃 + 悬浮放大+突出核心样式 */
 .playerContainer {
+  /* 原有毛玻璃样式保留 */
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
@@ -11,21 +12,32 @@
   position: relative;
   overflow: hidden;
   width: fit-content;
-  /* 删掉雪顶后，无需定位层级，简化样式 */
+
+  /* 新增：悬浮过渡动画（让放大/阴影变化更丝滑） */
+  transition: all 0.2s ease-in-out;
+  /* 鼠标移上去显示"放大光标" */
+  cursor: zoom-in;
 }
 
-/* 完全删除雪顶样式（去掉你说的白色条） */
-/* .snowTop { 这部分直接删掉 } */
+/* 新增：鼠标悬浮时 → 放大+阴影加重（突出效果） */
+.playerContainer:hover {
+  /* 轻微放大（和页面其他标签的放大比例一致，可改1.02/1.05） */
+  transform: scale(1.03);
+  /* 阴影加重，实现"突出"效果 */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  /* 可选：毛玻璃更实一点，强化突出 */
+  background: rgba(255, 255, 255, 0.25);
+}
 
-/* iframe样式：仅做基础适配 */
+/* iframe样式：适配悬浮效果 */
 .playerIframe {
   border: none;
   border-radius: 8px;
-  position: relative;
-  /* 删掉z-index，无需规避雪顶 */
+  /* 让iframe跟着容器一起放大，无偏移 */
+  transition: all 0.2s ease-in-out;
 }
 
-/* 移动端适配 */
+/* 移动端适配（保留） */
 @media (max-width: 480px) {
   .playerContainer {
     width: calc(100% - 32px);
@@ -35,5 +47,9 @@
   .playerIframe {
     width: 100% !important;
     height: 65px !important;
+  }
+  /* 移动端悬浮放大幅度减小，避免溢出 */
+  .playerContainer:hover {
+    transform: scale(1.01);
   }
 }
