@@ -137,50 +137,35 @@ export default function Home() {
         </div>
       )}
 
-      {/* ========== 手机端1:1复刻截图布局 ========== */}
-      <div className='max-sm:w-full max-sm:min-h-screen max-sm:flex max-sm:flex-col max-sm:items-center max-sm:px-4 max-sm:pt-4 max-sm:pb-8'>
-        {/* 1. 头像+问候语（和截图位置/尺寸完全匹配） */}
-        {cardStyles.hiCard?.enabled !== false && (
-          <div className='max-sm:w-full max-sm:mb-2'>
-            <HiCard />
-          </div>
-        )}
+      {/* ========== 核心：手机端完全保留图一布局，仅在按钮栏下加播放器 ========== */}
+      <div className='max-sm:flex max-sm:flex-col max-sm:items-center max-sm:gap-0 max-sm:pt-0 max-sm:pb-0'>
+        {/* 1. 头像+问候语：完全保留图一的位置/尺寸/间距 */}
+        {cardStyles.hiCard?.enabled !== false && <HiCard />}
 
-        {/* 2. GitHub/抖音/邮件按钮（宽度100%，无间距） */}
-        {cardStyles.socialButtons?.enabled !== false && (
-          <div className='max-sm:w-full max-sm:mb-1'>
-            <SocialButtons />
-          </div>
-        )}
+        {/* 2. GitHub/dy/邮件按钮栏：完全保留图一的位置/尺寸/间距 */}
+        {cardStyles.socialButtons?.enabled !== false && <SocialButtons />}
 
-        {/* 3. 音乐播放器（尺寸/位置完全匹配截图） */}
+        {/* 3. 新增：音乐播放器（仅插在这里，宽度匹配按钮栏，不改动任何原有元素） */}
         {maxSM && cardStyles.musicPlayer?.enabled !== false && (
           <div style={{
-            width: '100%',
-            height: 48, // 精准匹配截图播放器高度
-            marginBottom: 3, // 与下方文章的间距
-            borderRadius: 8, // 截图里的圆角
+            width: 'calc(100% - 40px)', // 精准匹配按钮栏的宽度（和图一按钮栏同宽）
+            height: 42, // 适配按钮栏下方的紧凑空间，不挤压后续元素
+            marginTop: 4, // 极小间距，不影响图一原有布局
+            marginBottom: 4,
+            borderRadius: 6, // 适配整体风格
             overflow: 'hidden'
           }}>
             <MusicPlayer style={{ width: '100%', height: '100%' }} />
           </div>
         )}
 
-        {/* 4. 最新文章卡片（宽度100%，无重叠） */}
-        {cardStyles.articleCard?.enabled !== false && (
-          <div className='max-sm:w-full max-sm:mb-2'>
-            <AritcleCard />
-          </div>
-        )}
+        {/* 4. 最新文章卡片：完全保留图一的位置/尺寸/间距 */}
+        {cardStyles.articleCard?.enabled !== false && <AritcleCard />}
 
-        {/* 5. 爱心按钮（原位显示） */}
-        {cardStyles.likePosition?.enabled !== false && (
-          <div className='max-sm:w-full'>
-            <LikePosition />
-          </div>
-        )}
+        {/* 5. 爱心按钮：完全保留图一的位置/尺寸/间距 */}
+        {cardStyles.likePosition?.enabled !== false && <LikePosition />}
 
-        {/* ========== 电脑端组件（完全保留，不改动） ========== */}
+        {/* ========== 电脑端组件：完全保留，不改动 ========== */}
         {!maxSM && cardStyles.artCard?.enabled !== false && <ArtCard />}
         {!maxSM && cardStyles.clockCard?.enabled !== false && <ClockCard />}
         {!maxSM && cardStyles.calendarCard?.enabled !== false && <CalendarCard />}
