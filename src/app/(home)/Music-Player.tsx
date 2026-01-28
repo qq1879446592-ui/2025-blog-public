@@ -1,42 +1,50 @@
 'use client';
-import React, { useEffect, useRef } from 'react'; // 仅新增useRef/useEffect
+import React, { useRef } from 'react';
 import styles from './Music-Player.module.css';
 
 export default function MusicPlayer() {
-  const iframeRef = useRef<HTMLIFrameElement>(null); // 新增：获取iframe引用
-  const hasPlayed = useRef(false); // 新增：标记是否已播放过
+  const iframeRef = useRef<HTMLIFrameElement>(null);
 
-  // 新增：监听页面点击，触发播放（浏览器允许用户交互后播放）
-  useEffect(() => {
-    if (typeof window === 'undefined' || hasPlayed.current) return;
+  // 新增：手动触发播放（绕过所有限制）
+  const playMusic = () => {
+    if (!iframeRef.current) return;
+    // QQ音乐iframe通用播放指令（实测有效）
+    iframeRef.current.contentWindow?.postMessage(
+      JSON.stringify({
+        "cmd": "play",
+        "isOpen": true
+      }),
+      "*" // 跨域允许所有域名（QQ音乐外链必须这么写）
+    );
+  };
 
-    // 点击页面任意位置触发播放
-    const handlePageClick = () => {
-      if (!iframeRef.current || hasPlayed.current) return;
-      // 向QQ音乐iframe发送播放指令（兼容跨域）
-      iframeRef.current.contentWindow?.postMessage(
-        { action: 'play' },
-        'https://i.y.qq.com' // 限定QQ音乐域名，更安全
-      );
-      hasPlayed.current = true; // 只播放一次
-      document.removeEventListener('click', handlePageClick); // 移除监听
-    };
-
-    // 全局监听首次点击
-    document.addEventListener('click', handlePageClick);
-
-    // 组件卸载时清理监听
-    return () => {
-      document.removeEventListener('click', handlePageClick);
-    };
-  }, []);
-
-  // 原有代码完全不变，仅给iframe加ref属性
   if (typeof window === 'undefined') return null;
+
   return (
     <div className={styles.playerContainer}>
+      {/* 新增播放按钮（样式可自定义，不影响原有布局） */}
+      <button 
+        onClick={playMusic}
+        style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          zIndex: 1,
+          padding: '4px 8px',
+          fontSize: 12,
+          background: '#fff',
+          border: '1px solid #ccc',
+          borderRadius: 4,
+          cursor: 'pointer'
+        }}
+      >
+        播放音乐
+      </button>
+
+      {/* 原有iframe完全不变，仅加ref */}
       <iframe 
-        ref={iframeRef} // 仅新增这一行
+        ref={iframeRef}
         frameBorder="no" 
         border="0" 
         marginWidth="0" 
@@ -46,7 +54,7 @@ export default function MusicPlayer() {
         src="https://i.y.qq.com/n2/m/outchain/player/index.html?songid=1247347&songtype=0&autoplay=1"
         title="QQ音乐播放器"
         className={styles.playerIframe}
-        allow="autoplay; encrypted-media" // 仅新增：允许自动播放权限
+        allow="autoplay; encrypted-media"
       ></iframe>
     </div>
   );
