@@ -14,7 +14,7 @@ export default function MusicPlayer() {
         marginHeight="0" 
         width={320} 
         height={65} 
-        src="https://i.y.qq.com/n2/m/outchain/player/index.html?songid=1247347&songtype=0"
+        src="https://i.y.qq.com/n2/m/outchain/player/index.html?songid=1247347&songtype=0&autoplay=1"
         title="QQ音乐播放器"
         className={styles.playerIframe}
       ></iframe>
