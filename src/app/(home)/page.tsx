@@ -23,13 +23,13 @@ import { useEffect, useState, useCallback, useRef } from 'react'
 import SnowfallBackground from '@/layout/backgrounds/snowfall'
 
 export default function Home() {
-  const { maxSM } = useSize() // maxSM = 移动端（手机）
+  const { maxSM } = useSize() // 手机端标识
   const { cardStyles, configDialogOpen, setConfigDialogOpen, siteContent, setCardStyles } = useConfigStore()
   const editing = useLayoutEditStore(state => state.editing)
   const saveEditing = useLayoutEditStore(state => state.saveEditing)
   const cancelEditing = useLayoutEditStore(state => state.cancelEditing)
   
-  // 拖拽核心控制（仅电脑端用）
+  // 电脑端拖拽逻辑（保持不变）
   const dragControls = useDragControls()
   const isDragging = useRef(false)
   const playerRef = useRef<HTMLDivElement>(null)
@@ -38,13 +38,10 @@ export default function Home() {
     height: typeof window !== 'undefined' ? window.innerHeight : 1080 
   })
 
-  // 窗口尺寸 + 全局鼠标监听（仅电脑端拖拽用）
   useEffect(() => {
     if (typeof window === 'undefined') return
-
     const handleResize = () => setWindowSize({ width: window.innerWidth, height: window.innerHeight })
     window.addEventListener('resize', handleResize)
-
     const handleGlobalMouseUp = () => {
       if (isDragging.current) {
         dragControls.stop()
@@ -52,16 +49,14 @@ export default function Home() {
       }
     }
     window.addEventListener('mouseup', handleGlobalMouseUp)
-
     return () => {
       window.removeEventListener('resize', handleResize)
       window.removeEventListener('mouseup', handleGlobalMouseUp)
     }
   }, [dragControls])
 
-  // 电脑端拖拽逻辑（仅电脑端用）
   const handleDragStart = (e: React.MouseEvent) => {
-    if (!editing || maxSM) return // 移动端不触发拖拽
+    if (!editing || maxSM) return
     e.stopPropagation()
     isDragging.current = true
     dragControls.start(e)
@@ -80,7 +75,6 @@ export default function Home() {
     isDragging.current = false
   }, [cardStyles, setCardStyles, editing, dragControls, windowSize, maxSM])
 
-  // 编辑模式操作
   const handleSave = () => {
     saveEditing()
     toast.success('首页布局偏移已保存')
@@ -93,7 +87,6 @@ export default function Home() {
     toast.info('已取消此次拖拽布局修改')
   }
 
-  // 快捷键逻辑
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && (e.key === 'l' || e.key === ',')) {
@@ -107,7 +100,6 @@ export default function Home() {
     }
   }, [setConfigDialogOpen])
 
-  // 电脑端拖拽约束（仅电脑端用）
   const getConstraints = () => ({
     top: 0,
     left: 0,
@@ -119,7 +111,7 @@ export default function Home() {
     <>
       {siteContent.enableChristmas && <SnowfallBackground zIndex={0} count={!maxSM ? 125 : 20} />}
 
-      {editing && !maxSM && ( // 仅电脑端显示编辑栏
+      {editing && !maxSM && (
         <div className='pointer-events-none fixed inset-x-0 top-0 z-50 flex justify-center pt-6'>
           <div className='pointer-events-auto flex items-center gap-3 rounded-2xl bg-white/80 px-4 py-2 shadow-lg backdrop-blur'>
             <span className='text-xs text-gray-600'>编辑模式：拖右上角手柄调整位置 | 点击播放器可播放</span>
@@ -145,15 +137,15 @@ export default function Home() {
         </div>
       )}
 
-      {/* 页面主体：区分电脑端/移动端布局 */}
+      {/* 页面主体：恢复所有原有组件 + 播放器不遮挡 */}
       <div className='max-sm:flex max-sm:flex-col max-sm:items-center max-sm:gap-6 max-sm:pt-28 max-sm:pb-20'>
-        {/* 电脑端专属组件（maxSM=false 时显示） */}
+        {/* 电脑端专属组件（保持不变） */}
         {!maxSM && cardStyles.artCard?.enabled !== false && <ArtCard />}
         {!maxSM && cardStyles.hiCard?.enabled !== false && <HiCard />}
         {!maxSM && cardStyles.clockCard?.enabled !== false && <ClockCard />}
         {!maxSM && cardStyles.calendarCard?.enabled !== false && <CalendarCard />}
         
-        {/* 电脑端音乐播放器（保持原有逻辑，不修改） */}
+        {/* 电脑端播放器（保持不变） */}
         {!maxSM && cardStyles.musicPlayer?.enabled !== false && (
           <motion.div
             ref={playerRef}
@@ -209,32 +201,35 @@ export default function Home() {
           </motion.div>
         )}
 
-        {/* 移动端+电脑端通用组件 */}
+        {/* ========== 恢复：原有组件（手机端+电脑端通用） ========== */}
         {cardStyles.socialButtons?.enabled !== false && <SocialButtons />}
 
-        {/* ========== 新增：移动端音乐播放器（仅手机端显示，放在GitHub按钮下方） ========== */}
-        {maxSM && cardStyles.musicPlayer?.enabled !== false && ( // maxSM=true = 手机端
+        {/* 移动端播放器：放在GitHub按钮下方，不遮挡原有内容 */}
+        {maxSM && cardStyles.musicPlayer?.enabled !== false && (
           <div style={{
-            width: '100%',
-            maxWidth: 300, // 适配手机宽度
+            width: '90%', // 适配手机宽度
+            maxWidth: 300,
             height: 65,
-            marginTop: 8, // 与上方GitHub按钮保持间距
+            marginTop: 10, // 与GitHub按钮保持间距
             borderRadius: 12,
-            overflow: 'hidden'
+            overflow: 'hidden',
+            zIndex: 1 // 低于原有组件层级，不遮挡
           }}>
             <MusicPlayer style={{ width: '100%', height: '100%' }} />
           </div>
         )}
-        {/* ============================================== */}
 
-        {/* 其他通用/移动端组件 */}
-        {!maxSM && cardStyles.musicCard?.enabled !== false && <MusicCard />}
-        {!maxSM && cardStyles.shareCard?.enabled !== false && <ShareCard />}
+        {/* 恢复所有原有组件（手机端正常显示） */}
         {cardStyles.articleCard?.enabled !== false && <AritcleCard />}
-        {!maxSM && cardStyles.writeButtons?.enabled !== false && <WriteButtons />}
         {cardStyles.likePosition?.enabled !== false && <LikePosition />}
         {cardStyles.hatCard?.enabled !== false && <HatCard />}
         {cardStyles.beianCard?.enabled !== false && <BeianCard />}
+        {/* ========== 恢复完成 ========== */}
+
+        {/* 电脑端专属组件（保持不变） */}
+        {!maxSM && cardStyles.musicCard?.enabled !== false && <MusicCard />}
+        {!maxSM && cardStyles.shareCard?.enabled !== false && <ShareCard />}
+        {!maxSM && cardStyles.writeButtons?.enabled !== false && <WriteButtons />}
       </div>
 
       {siteContent.enableChristmas && <SnowfallBackground zIndex={2} count={!maxSM ? 125 : 20} />}
