@@ -137,35 +137,35 @@ export default function Home() {
         </div>
       )}
 
-      {/* ========== 核心：手机端完全保留图一布局，仅在按钮栏下加播放器 ========== */}
-      <div className='max-sm:flex max-sm:flex-col max-sm:items-center max-sm:gap-0 max-sm:pt-0 max-sm:pb-0'>
-        {/* 1. 头像+问候语：完全保留图一的位置/尺寸/间距 */}
+      {/* ========== 核心修正：整体上移+保留所有元素 ========== */}
+      <div className='max-sm:flex max-sm:flex-col max-sm:items-center max-sm:gap-0 max-sm:-mt-8 max-sm:pb-0'>
+        {/* 1. 头像+问候语：完全保留图一样式，整体上移消除顶部空白 */}
         {cardStyles.hiCard?.enabled !== false && <HiCard />}
 
-        {/* 2. GitHub/dy/邮件按钮栏：完全保留图一的位置/尺寸/间距 */}
+        {/* 2. GitHub/dy/邮件按钮栏：完全保留图一样式 */}
         {cardStyles.socialButtons?.enabled !== false && <SocialButtons />}
 
-        {/* 3. 新增：音乐播放器（仅插在这里，宽度匹配按钮栏，不改动任何原有元素） */}
+        {/* 3. 音乐播放器：宽度匹配按钮栏，极小间距不影响布局 */}
         {maxSM && cardStyles.musicPlayer?.enabled !== false && (
           <div style={{
-            width: 'calc(100% - 40px)', // 精准匹配按钮栏的宽度（和图一按钮栏同宽）
-            height: 42, // 适配按钮栏下方的紧凑空间，不挤压后续元素
-            marginTop: 4, // 极小间距，不影响图一原有布局
-            marginBottom: 4,
-            borderRadius: 6, // 适配整体风格
+            width: 'calc(100% - 40px)', // 精准匹配按钮栏宽度
+            height: 40, // 极致紧凑，不占多余空间
+            marginTop: 2, 
+            marginBottom: 2,
+            borderRadius: 6,
             overflow: 'hidden'
           }}>
             <MusicPlayer style={{ width: '100%', height: '100%' }} />
           </div>
         )}
 
-        {/* 4. 最新文章卡片：完全保留图一的位置/尺寸/间距 */}
+        {/* 4. 最新文章卡片：完全保留图一所有元素（包括装饰/间距） */}
         {cardStyles.articleCard?.enabled !== false && <AritcleCard />}
 
-        {/* 5. 爱心按钮：完全保留图一的位置/尺寸/间距 */}
+        {/* 5. 爱心按钮：完全保留图一位置 */}
         {cardStyles.likePosition?.enabled !== false && <LikePosition />}
 
-        {/* ========== 电脑端组件：完全保留，不改动 ========== */}
+        {/* ========== 电脑端组件：无改动 ========== */}
         {!maxSM && cardStyles.artCard?.enabled !== false && <ArtCard />}
         {!maxSM && cardStyles.clockCard?.enabled !== false && <ClockCard />}
         {!maxSM && cardStyles.calendarCard?.enabled !== false && <CalendarCard />}
