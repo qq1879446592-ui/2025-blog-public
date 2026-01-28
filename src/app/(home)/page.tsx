@@ -117,6 +117,40 @@ export default function Home() {
     bottom: windowSize.height - (cardStyles.musicPlayer?.height || 65),
   })
 
+  // 播放器自动播放逻辑（页面挂载后触发）
+  useEffect(() => {
+    if (!playerRef.current || editing) return // 编辑模式不自动播放，避免拖拽时干扰
+    const audio = playerRef.current.querySelector('audio')
+    if (!audio) return
+
+    // 浏览器自动播放策略兼容：先静音播放，成功后取消静音
+    const autoPlayAudio = async () => {
+      try {
+        audio.muted = true
+        await audio.play()
+        audio.muted = false // 播放成功后取消静音
+        console.log('音乐播放器自动播放成功')
+      } catch (err) {
+        console.warn('自动播放失败，等待用户交互后播放：', err)
+        // 降级：用户点击页面任意位置后播放
+        const handleFirstClick = () => {
+          if (audio.paused) {
+            audio.play().catch(() => {})
+          }
+          document.removeEventListener('click', handleFirstClick)
+        }
+        document.addEventListener('click', handleFirstClick)
+      }
+    }
+
+    autoPlayAudio()
+
+    // 组件卸载时停止播放
+    return () => {
+      audio.pause()
+    }
+  }, [editing])
+
   return (
     <>
       {siteContent.enableChristmas && <SnowfallBackground zIndex={0} count={!maxSM ? 125 : 20} />}
