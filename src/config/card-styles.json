@@ -11,8 +11,8 @@
 		"width": 360,
 		"height": 288,
 		"order": 1,
-		"offsetX": null,
-		"offsetY": null,
+		"offsetX": -152,
+		"offsetY": -179,
 		"enabled": true
 	},
 	"clockCard": {
@@ -28,8 +28,8 @@
 		"width": 350,
 		"height": 286,
 		"order": 5,
-		"offsetX": null,
-		"offsetY": null,
+		"offsetX": 219,
+		"offsetY": -82,
 		"enabled": true
 	},
 	"musicPlayer": {
