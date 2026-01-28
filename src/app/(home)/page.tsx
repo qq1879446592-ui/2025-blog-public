@@ -24,7 +24,7 @@ import SnowfallBackground from '@/layout/backgrounds/snowfall'
 
 export default function Home() {
 	const { maxSM } = useSize()
-	const { cardStyles, configDialogOpen, setConfigDialogOpen, siteContent } = useConfigStore()
+	const { cardStyles, configDialogOpen, setConfigDialogOpen, siteContent, setCardStyles } = useConfigStore()
 	const editing = useLayoutEditStore(state => state.editing)
 	const saveEditing = useLayoutEditStore(state => state.saveEditing)
 	const cancelEditing = useLayoutEditStore(state => state.cancelEditing)
@@ -83,7 +83,7 @@ export default function Home() {
 				{cardStyles.hiCard?.enabled !== false && <HiCard />}
 				{!maxSM && cardStyles.clockCard?.enabled !== false && <ClockCard />}
 				{!maxSM && cardStyles.calendarCard?.enabled !== false && <CalendarCard />}
-			    {!maxSM && cardStyles.musicPlayer.enabled!== false && (
+			    {!maxSM && cardStyles.musicPlayer?.enabled !== false && (
   		          <motion.div
   		            data-id="musicPlayer"
   		            style={{
@@ -99,12 +99,11 @@ export default function Home() {
   		            dragConstraints={{ 
   		              top: 0,
   		              left: 0,
-  		              right: window.innerWidth - 320,
-  		              bottom: window.innerHeight - 65
+  		              right: window.innerWidth - (cardStyles.musicPlayer.width || 320),
+  		              bottom: window.innerHeight - (cardStyles.musicPlayer.height || 65)
   		            }}
   		            dragScale={1.02}
   		            onDragEnd={(_, info) => {
-  		              const { setCardStyles } = useConfigStore();
   		              setCardStyles({
   		                ...cardStyles,
   		                musicPlayer: {
