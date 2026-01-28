@@ -83,7 +83,46 @@ export default function Home() {
 				{cardStyles.hiCard?.enabled !== false && <HiCard />}
 				{!maxSM && cardStyles.clockCard?.enabled !== false && <ClockCard />}
 				{!maxSM && cardStyles.calendarCard?.enabled !== false && <CalendarCard />}
-			    {cardStyles.musicPlayer?.enabled!== false && <MusicPlayer />}
+			    {!maxSM && cardStyles.musicPlayer.enabled!== false && (
+  		          <motion.div
+  		            data-id="musicPlayer"
+  		            style={{
+  		              position: 'absolute',
+  		              top: cardStyles.musicPlayer.top || 0,
+  		              left: cardStyles.musicPlayer.left || 0,
+  		              width: cardStyles.musicPlayer.width || 320,
+  		              height: cardStyles.musicPlayer.height || 65,
+  		              borderRadius: 12,
+  		              zIndex: 10,
+  		            }}
+  		            drag
+  		            dragConstraints={{ 
+  		              top: 0,
+  		              left: 0,
+  		              right: window.innerWidth - 320,
+  		              bottom: window.innerHeight - 65
+  		            }}
+  		            dragScale={1.02}
+  		            onDragEnd={(_, info) => {
+  		              const { setCardStyles } = useConfigStore();
+  		              setCardStyles({
+  		                ...cardStyles,
+  		                musicPlayer: {
+  		                  ...cardStyles.musicPlayer,
+  		                  top: info.offset.y,
+  		                  left: info.offset.x,
+  		                },
+        		      });
+  		            }}
+  		            whileHover={{ cursor: 'move' }}
+  		            whileDrag={{
+  		              boxShadow: '0 10px 30px rgba(0,0,0,0.2)',
+  		              scale: 1.05,
+  		            }}
+  		          >
+  		            <MusicPlayer />
+  		          </motion.div>
+  		        )}
                 {!maxSM && cardStyles.musicCard?.enabled !== false && <MusicCard />}
 				{cardStyles.socialButtons?.enabled !== false && <SocialButtons />}
 				{!maxSM && cardStyles.shareCard?.enabled !== false && <ShareCard />}
