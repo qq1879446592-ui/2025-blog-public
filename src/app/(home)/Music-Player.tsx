@@ -7,7 +7,6 @@ export default function MusicPlayer() {
 
   return (
     <div className={styles.playerContainer}>
-      <div className={styles.snowTop}></div>
       <iframe 
         frameBorder="no" 
         border="0" 
@@ -15,7 +14,7 @@ export default function MusicPlayer() {
         marginHeight="0" 
         width={320} 
         height={65} 
-        src="https://i.y.qq.com/n2/m/outchain/player/index.html?songid=106958339&songtype=0"
+        src="https://i.y.qq.com/n2/m/outchain/player/index.html?songid=127570280&songtype=0"
         title="QQ音乐播放器"
         className={styles.playerIframe}
       ></iframe>
