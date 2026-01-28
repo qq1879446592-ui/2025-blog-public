@@ -1,55 +1,36 @@
-/* src/app/(home)/Music-Player.module.css */
-/* 播放器外层容器：毛玻璃 + 悬浮放大+突出核心样式 */
 .playerContainer {
-  /* 原有毛玻璃样式保留 */
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  padding: 12px;
-  margin: 16px auto;
-  position: relative;
+  
+  /* 只保留基础样式，删掉所有!important和强制定位 */
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  height: 65px;
+  line-height: 0;
+  vertical-align: top;
+  
+  position: relative; /* 只保留relative，让外部定位生效 */
   overflow: hidden;
-  width: fit-content;
-
-  /* 新增：悬浮过渡动画（让放大/阴影变化更丝滑） */
   transition: all 0.2s ease-in-out;
-  /* 鼠标移上去显示"放大光标" */
   cursor: zoom-in;
+  display: inline-block;
 }
 
-/* 新增：鼠标悬浮时 → 放大+阴影加重（突出效果） */
 .playerContainer:hover {
-  /* 轻微放大（和页面其他标签的放大比例一致，可改1.02/1.05） */
-  transform: scale(1.03);
-  /* 阴影加重，实现"突出"效果 */
+  transform: scale(1.01);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  /* 可选：毛玻璃更实一点，强化突出 */
   background: rgba(255, 255, 255, 0.25);
 }
 
-/* iframe样式：适配悬浮效果 */
 .playerIframe {
   border: none;
-  border-radius: 8px;
-  /* 让iframe跟着容器一起放大，无偏移 */
-  transition: all 0.2s ease-in-out;
-}
-
-/* 移动端适配（保留） */
-@media (max-width: 480px) {
-  .playerContainer {
-    width: calc(100% - 32px);
-    margin: 12px auto;
-    padding: 10px;
-  }
-  .playerIframe {
-    width: 100% !important;
-    height: 65px !important;
-  }
-  /* 移动端悬浮放大幅度减小，避免溢出 */
-  .playerContainer:hover {
-    transform: scale(1.01);
-  }
+  border-radius: 12px;
+  width: 100%;
+  height: 65px;
+  display: block;
+  line-height: 0;
 }
