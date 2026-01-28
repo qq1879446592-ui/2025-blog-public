@@ -1,16 +1,16 @@
 'use client'
 
-import HiCard from '@/app/(home)/hi-card'
+import HiCard from '@/app/(home)/hi-card' // 对应“头像+Good Morning”
 import ArtCard from '@/app/(home)/art-card'
 import ClockCard from '@/app/(home)/clock-card'
 import CalendarCard from '@/app/(home)/calendar-card'
 import MusicPlayer from '@/app/(home)/Music-Player'
 import MusicCard from '@/app/(home)/music-card'
-import SocialButtons from '@/app/(home)/social-buttons'
+import SocialButtons from '@/app/(home)/social-buttons' // 对应GitHub/dy/邮件按钮
 import ShareCard from '@/app/(home)/share-card'
-import AritcleCard from '@/app/(home)/aritcle-card'
+import AritcleCard from '@/app/(home)/aritcle-card' // 对应“最新文章”
 import WriteButtons from '@/app/(home)/write-buttons'
-import LikePosition from './like-position'
+import LikePosition from './like-position' // 对应爱心按钮
 import HatCard from './hat-card'
 import BeianCard from './beian-card'
 import { useSize } from '@/hooks/use-size'
@@ -38,6 +38,7 @@ export default function Home() {
     height: typeof window !== 'undefined' ? window.innerHeight : 1080 
   })
 
+  // 电脑端拖拽相关（保持不变）
   useEffect(() => {
     if (typeof window === 'undefined') return
     const handleResize = () => setWindowSize({ width: window.innerWidth, height: window.innerHeight })
@@ -137,15 +138,38 @@ export default function Home() {
         </div>
       )}
 
-      {/* 页面主体：恢复所有原有组件 + 播放器不遮挡 */}
-      <div className='max-sm:flex max-sm:flex-col max-sm:items-center max-sm:gap-6 max-sm:pt-28 max-sm:pb-20'>
-        {/* 电脑端专属组件（保持不变） */}
+      {/* 页面主体：完全匹配图一的手机端布局顺序 */}
+      <div className='max-sm:flex max-sm:flex-col max-sm:items-center max-sm:gap-4 max-sm:pt-16 max-sm:pb-20'>
+        {/* 1. 恢复图一的「头像+Good Morning问候语」（手机端也显示） */}
+        {cardStyles.hiCard?.enabled !== false && <HiCard />}
+
+        {/* 2. GitHub/dy/邮件按钮（和图一一致） */}
+        {cardStyles.socialButtons?.enabled !== false && <SocialButtons />}
+
+        {/* 3. 手机端播放器：放在GitHub按钮正下方，不遮挡后续内容 */}
+        {maxSM && cardStyles.musicPlayer?.enabled !== false && (
+          <div style={{
+            width: '85%', // 匹配图一的宽度
+            height: 55, // 适配手机端紧凑布局
+            marginTop: 8, // 和GitHub按钮保持小间距
+            borderRadius: 12,
+            overflow: 'hidden',
+            zIndex: 2 // 不遮挡下方内容
+          }}>
+            <MusicPlayer style={{ width: '100%', height: '100%' }} />
+          </div>
+        )}
+
+        {/* 4. 恢复图一的「最新文章」卡片 */}
+        {cardStyles.articleCard?.enabled !== false && <AritcleCard />}
+
+        {/* 5. 恢复图一的「爱心按钮」 */}
+        {cardStyles.likePosition?.enabled !== false && <LikePosition />}
+
+        {/* 电脑端专属组件（保持不变，不影响手机端） */}
         {!maxSM && cardStyles.artCard?.enabled !== false && <ArtCard />}
-        {!maxSM && cardStyles.hiCard?.enabled !== false && <HiCard />}
         {!maxSM && cardStyles.clockCard?.enabled !== false && <ClockCard />}
         {!maxSM && cardStyles.calendarCard?.enabled !== false && <CalendarCard />}
-        
-        {/* 电脑端播放器（保持不变） */}
         {!maxSM && cardStyles.musicPlayer?.enabled !== false && (
           <motion.div
             ref={playerRef}
@@ -200,36 +224,11 @@ export default function Home() {
             )}
           </motion.div>
         )}
-
-        {/* ========== 恢复：原有组件（手机端+电脑端通用） ========== */}
-        {cardStyles.socialButtons?.enabled !== false && <SocialButtons />}
-
-        {/* 移动端播放器：放在GitHub按钮下方，不遮挡原有内容 */}
-        {maxSM && cardStyles.musicPlayer?.enabled !== false && (
-          <div style={{
-            width: '90%', // 适配手机宽度
-            maxWidth: 300,
-            height: 65,
-            marginTop: 10, // 与GitHub按钮保持间距
-            borderRadius: 12,
-            overflow: 'hidden',
-            zIndex: 1 // 低于原有组件层级，不遮挡
-          }}>
-            <MusicPlayer style={{ width: '100%', height: '100%' }} />
-          </div>
-        )}
-
-        {/* 恢复所有原有组件（手机端正常显示） */}
-        {cardStyles.articleCard?.enabled !== false && <AritcleCard />}
-        {cardStyles.likePosition?.enabled !== false && <LikePosition />}
-        {cardStyles.hatCard?.enabled !== false && <HatCard />}
-        {cardStyles.beianCard?.enabled !== false && <BeianCard />}
-        {/* ========== 恢复完成 ========== */}
-
-        {/* 电脑端专属组件（保持不变） */}
         {!maxSM && cardStyles.musicCard?.enabled !== false && <MusicCard />}
         {!maxSM && cardStyles.shareCard?.enabled !== false && <ShareCard />}
         {!maxSM && cardStyles.writeButtons?.enabled !== false && <WriteButtons />}
+        {cardStyles.hatCard?.enabled !== false && <HatCard />}
+        {cardStyles.beianCard?.enabled !== false && <BeianCard />}
       </div>
 
       {siteContent.enableChristmas && <SnowfallBackground zIndex={2} count={!maxSM ? 125 : 20} />}
