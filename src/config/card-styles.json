@@ -38,7 +38,8 @@
 		"height": 66,
 		"top": 450,
 		"left": 520,
-		"displayOrder": 6
+		"displayOrder": 6,
+		"order": 12
 	},
 	"musicCard": {
 		"width": 293,
