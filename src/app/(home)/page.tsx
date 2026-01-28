@@ -1,16 +1,16 @@
 'use client'
 
-import HiCard from '@/app/(home)/hi-card' // 对应“头像+Good Morning”
+import HiCard from '@/app/(home)/hi-card' // 头像+问候语
 import ArtCard from '@/app/(home)/art-card'
 import ClockCard from '@/app/(home)/clock-card'
 import CalendarCard from '@/app/(home)/calendar-card'
 import MusicPlayer from '@/app/(home)/Music-Player'
 import MusicCard from '@/app/(home)/music-card'
-import SocialButtons from '@/app/(home)/social-buttons' // 对应GitHub/dy/邮件按钮
+import SocialButtons from '@/app/(home)/social-buttons' // GitHub/dy/邮件
 import ShareCard from '@/app/(home)/share-card'
-import AritcleCard from '@/app/(home)/aritcle-card' // 对应“最新文章”
+import AritcleCard from '@/app/(home)/aritcle-card' // 最新文章
 import WriteButtons from '@/app/(home)/write-buttons'
-import LikePosition from './like-position' // 对应爱心按钮
+import LikePosition from './like-position' // 爱心按钮
 import HatCard from './hat-card'
 import BeianCard from './beian-card'
 import { useSize } from '@/hooks/use-size'
@@ -138,35 +138,47 @@ export default function Home() {
         </div>
       )}
 
-      {/* 页面主体：完全匹配图一的手机端布局顺序 */}
-      <div className='max-sm:flex max-sm:flex-col max-sm:items-center max-sm:gap-4 max-sm:pt-16 max-sm:pb-20'>
-        {/* 1. 恢复图一的「头像+Good Morning问候语」（手机端也显示） */}
-        {cardStyles.hiCard?.enabled !== false && <HiCard />}
+      {/* 页面主体：解决顶部空白+重叠+尺寸问题 */}
+      <div className='max-sm:flex max-sm:flex-col max-sm:items-center max-sm:gap-3 max-sm:pt-6 max-sm:pb-12'>
+        {/* 1. 头像+问候语（无重叠，紧凑显示） */}
+        {cardStyles.hiCard?.enabled !== false && (
+          <div style={{ width: '90%', marginTop: 2 }}>
+            <HiCard />
+          </div>
+        )}
 
-        {/* 2. GitHub/dy/邮件按钮（和图一一致） */}
-        {cardStyles.socialButtons?.enabled !== false && <SocialButtons />}
+        {/* 2. GitHub/dy/邮件按钮（与问候语紧凑衔接） */}
+        {cardStyles.socialButtons?.enabled !== false && (
+          <div style={{ width: '90%' }}>
+            <SocialButtons />
+          </div>
+        )}
 
-        {/* 3. 手机端播放器：放在GitHub按钮正下方，不遮挡后续内容 */}
+        {/* 3. 手机端播放器（尺寸适配+无重叠） */}
         {maxSM && cardStyles.musicPlayer?.enabled !== false && (
           <div style={{
-            width: '85%', // 匹配图一的宽度
-            height: 55, // 适配手机端紧凑布局
-            marginTop: 8, // 和GitHub按钮保持小间距
+            width: '90%', // 和按钮/问候语宽度一致
+            height: 58, // 适配手机端的紧凑尺寸
+            marginTop: 6, // 与上方按钮间距适中
+            marginBottom: 6, // 与下方文章间距适中
             borderRadius: 12,
-            overflow: 'hidden',
-            zIndex: 2 // 不遮挡下方内容
+            overflow: 'hidden'
           }}>
             <MusicPlayer style={{ width: '100%', height: '100%' }} />
           </div>
         )}
 
-        {/* 4. 恢复图一的「最新文章」卡片 */}
-        {cardStyles.articleCard?.enabled !== false && <AritcleCard />}
+        {/* 4. 最新文章（与播放器无重叠） */}
+        {cardStyles.articleCard?.enabled !== false && (
+          <div style={{ width: '90%' }}>
+            <AritcleCard />
+          </div>
+        )}
 
-        {/* 5. 恢复图一的「爱心按钮」 */}
+        {/* 5. 爱心按钮（紧凑显示） */}
         {cardStyles.likePosition?.enabled !== false && <LikePosition />}
 
-        {/* 电脑端专属组件（保持不变，不影响手机端） */}
+        {/* 电脑端专属组件（保持不变） */}
         {!maxSM && cardStyles.artCard?.enabled !== false && <ArtCard />}
         {!maxSM && cardStyles.clockCard?.enabled !== false && <ClockCard />}
         {!maxSM && cardStyles.calendarCard?.enabled !== false && <CalendarCard />}
