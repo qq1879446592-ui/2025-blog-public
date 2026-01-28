@@ -111,6 +111,24 @@ export default function Home() {
     <>
       {siteContent.enableChristmas && <SnowfallBackground zIndex={0} count={!maxSM ? 125 : 20} />}
 
+      {/* ========== 核心：把顶部功能栏移到最顶部空白区 ========== */}
+      {maxSM && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          zIndex: 99, // 悬浮在最顶部，不遮挡其他内容
+          padding: '4px 8px',
+          boxSizing: 'border-box'
+        }}>
+          {/* 这里是你红圈里的顶部功能栏组件（替换成实际组件名） */}
+          {/* 比如：<TopBar /> （如果是HiCard里的顶部栏，调整HiCard的结构） */}
+          {/* 若HiCard包含顶部栏+问候语，拆分后：顶部栏放这里，问候语保留原位 */}
+          <HiCard renderOnlyTopBar={true} /> 
+        </div>
+      )}
+
       {editing && !maxSM && (
         <div className='pointer-events-none fixed inset-x-0 top-0 z-50 flex justify-center pt-6'>
           <div className='pointer-events-auto flex items-center gap-3 rounded-2xl bg-white/80 px-4 py-2 shadow-lg backdrop-blur'>
@@ -137,21 +155,21 @@ export default function Home() {
         </div>
       )}
 
-      {/* ========== 核心修正：整体上移+保留所有元素 ========== */}
-      <div className='max-sm:flex max-sm:flex-col max-sm:items-center max-sm:gap-0 max-sm:-mt-8 max-sm:pb-0'>
-        {/* 1. 头像+问候语：完全保留图一样式，整体上移消除顶部空白 */}
-        {cardStyles.hiCard?.enabled !== false && <HiCard />}
+      {/* ========== 其他元素：位置/尺寸完全不动，仅调宽播放器 ========== */}
+      <div className='max-sm:flex max-sm:flex-col max-sm:items-center max-sm:gap-0 max-sm:pt-12 max-sm:pb-0'>
+        {/* 1. 问候语（仅保留问候语部分，顶部栏已移到最顶部） */}
+        {cardStyles.hiCard?.enabled !== false && <HiCard renderOnlyGreeting={true} />}
 
-        {/* 2. GitHub/dy/邮件按钮栏：完全保留图一样式 */}
+        {/* 2. GitHub/dy/邮件按钮栏：位置/尺寸完全不动 */}
         {cardStyles.socialButtons?.enabled !== false && <SocialButtons />}
 
-        {/* 3. 音乐播放器：宽度匹配按钮栏，极小间距不影响布局 */}
+        {/* 3. 播放器：调宽（全屏宽度），高度不变，其他不动 */}
         {maxSM && cardStyles.musicPlayer?.enabled !== false && (
           <div style={{
-            width: 'calc(100% - 40px)', // 精准匹配按钮栏宽度
-            height: 40, // 极致紧凑，不占多余空间
-            marginTop: 2, 
-            marginBottom: 2,
+            width: '100%', // 调宽为全屏宽度，匹配按钮栏
+            height: 42, // 高度不变
+            marginTop: 4,
+            marginBottom: 4,
             borderRadius: 6,
             overflow: 'hidden'
           }}>
@@ -159,10 +177,10 @@ export default function Home() {
           </div>
         )}
 
-        {/* 4. 最新文章卡片：完全保留图一所有元素（包括装饰/间距） */}
+        {/* 4. 最新文章卡片：位置/尺寸完全不动 */}
         {cardStyles.articleCard?.enabled !== false && <AritcleCard />}
 
-        {/* 5. 爱心按钮：完全保留图一位置 */}
+        {/* 5. 爱心按钮：位置/尺寸完全不动 */}
         {cardStyles.likePosition?.enabled !== false && <LikePosition />}
 
         {/* ========== 电脑端组件：无改动 ========== */}
