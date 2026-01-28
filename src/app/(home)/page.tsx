@@ -1,59 +1,217 @@
 'use client'
 
+import HiCard from '@/app/(home)/hi-card' 
+import ArtCard from '@/app/(home)/art-card'
+import ClockCard from '@/app/(home)/clock-card'
+import CalendarCard from '@/app/(home)/calendar-card'
+import MusicPlayer from '@/app/(home)/Music-Player'
+import MusicCard from '@/app/(home)/music-card'
+import SocialButtons from '@/app/(home)/social-buttons' 
+import ShareCard from '@/app/(home)/share-card'
+import AritcleCard from '@/app/(home)/aritcle-card' 
+import WriteButtons from '@/app/(home)/write-buttons'
+import LikePosition from './like-position' 
+import HatCard from './hat-card'
+import BeianCard from './beian-card'
+import { useSize } from '@/hooks/use-size'
+import { motion, useDragControls } from 'motion/react'
+import { useLayoutEditStore } from './stores/layout-edit-store'
+import { useConfigStore } from './stores/config-store'
+import { toast } from 'sonner'
+import ConfigDialog from './config-dialog/index'
+import { useEffect, useState, useCallback, useRef } from 'react'
+import SnowfallBackground from '@/layout/backgrounds/snowfall'
+
 export default function Home() {
+  const { maxSM } = useSize() 
+  const { cardStyles, configDialogOpen, setConfigDialogOpen, siteContent, setCardStyles } = useConfigStore()
+  const editing = useLayoutEditStore(state => state.editing)
+  const saveEditing = useLayoutEditStore(state => state.saveEditing)
+  const cancelEditing = useLayoutEditStore(state => state.cancelEditing)
+  
+  // 电脑端拖拽逻辑（原始保留，无改动）
+  const dragControls = useDragControls()
+  const isDragging = useRef(false)
+  const playerRef = useRef<HTMLDivElement>(null)
+  const [windowSize, setWindowSize] = useState({ 
+    width: typeof window !== 'undefined' ? window.innerWidth : 1920, 
+    height: typeof window !== 'undefined' ? window.innerHeight : 1080 
+  })
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const handleResize = () => setWindowSize({ width: window.innerWidth, height: window.innerHeight })
+    window.addEventListener('resize', handleResize)
+    const handleGlobalMouseUp = () => {
+      if (isDragging.current) {
+        dragControls.stop()
+        isDragging.current = false
+      }
+    }
+    window.addEventListener('mouseup', handleGlobalMouseUp)
+    return () => {
+      window.removeEventListener('resize', handleResize)
+      window.removeEventListener('mouseup', handleGlobalMouseUp)
+    }
+  }, [dragControls])
+
+  const handleDragStart = (e: React.MouseEvent) => {
+    if (!editing || maxSM) return
+    e.stopPropagation()
+    isDragging.current = true
+    dragControls.start(e)
+  }
+
+  const handleDragEnd = useCallback((_, info) => {
+    if (!editing || maxSM || !isDragging.current) return
+    setCardStyles({
+      ...cardStyles,
+      musicPlayer: {
+        ...cardStyles.musicPlayer,
+        top: Math.max(0, Math.min(info.offset.y, windowSize.height - (cardStyles.musicPlayer?.height || 65))),
+        left: Math.max(0, Math.min(info.offset.x, windowSize.width - (cardStyles.musicPlayer?.width || 320))),
+      },
+    })
+    isDragging.current = false
+  }, [cardStyles, setCardStyles, editing, dragControls, windowSize, maxSM])
+
+  const handleSave = () => {
+    saveEditing()
+    toast.success('首页布局偏移已保存')
+  }
+
+  const handleCancel = () => {
+    cancelEditing()
+    isDragging.current = false
+    dragControls.stop()
+    toast.info('已取消此次拖拽布局修改')
+  }
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && (e.key === 'l' || e.key === ',')) {
+        e.preventDefault()
+        setConfigDialogOpen(true)
+      }
+    }
+    if (typeof window !== 'undefined') {
+      window.addEventListener('keydown', handleKeyDown)
+      return () => window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [setConfigDialogOpen])
+
+  const getConstraints = () => ({
+    top: 0,
+    left: 0,
+    right: windowSize.width - (cardStyles.musicPlayer?.width || 320),
+    bottom: windowSize.height - (cardStyles.musicPlayer?.height || 65),
+  })
+
   return (
-    <div style={{
-      width: '100%',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      padding: '4px 0',
-      gap: '1px'
-    }}>
-      {/* 1. 图一的问候语（仅1次） */}
-      <div style={{ width: '95%', marginBottom: '2px' }}>
-        {/* 粘贴你HiCard组件的原始代码（保证和图一一致） */}
-        <div>
-          <img src="你的头像地址" style={{ borderRadius: '50%', width: '80px', margin: '0 auto' }} />
-          <p>Good Afternoon</p>
-          <p>I'm douzi, Nice to meet you!</p>
+    <>
+      {siteContent.enableChristmas && <SnowfallBackground zIndex={0} count={!maxSM ? 125 : 20} />}
+
+      {editing && !maxSM && (
+        <div className='pointer-events-none fixed inset-x-0 top-0 z-50 flex justify-center pt-6'>
+          <div className='pointer-events-auto flex items-center gap-3 rounded-2xl bg-white/80 px-4 py-2 shadow-lg backdrop-blur'>
+            <span className='text-xs text-gray-600'>编辑模式：拖右上角手柄调整位置 | 点击播放器可播放</span>
+            <div className='flex gap-2'>
+              <motion.button
+                type='button'
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleCancel}
+                className='rounded-xl border bg-white px-3 py-1 text-xs font-medium text-gray-700'>
+                取消
+              </motion.button>
+              <motion.button 
+                type='button' 
+                whileHover={{ scale: 1.05 }} 
+                whileTap={{ scale: 0.95 }} 
+                onClick={handleSave} 
+                className='brand-btn px-3 py-1 text-xs'>
+                保存位置
+              </motion.button>
+            </div>
+          </div>
         </div>
+      )}
+
+      {/* ========== 完全还原最初的原始布局 ========== */}
+      <div className='max-sm:flex max-sm:flex-col max-sm:items-center max-sm:gap-0 max-sm:pt-0 max-sm:pb-0'>
+        {/* 原始组件：位置/尺寸/渲染逻辑完全回退 */}
+        {cardStyles.hiCard?.enabled !== false && <HiCard />}
+        {cardStyles.socialButtons?.enabled !== false && <SocialButtons />}
+        {cardStyles.articleCard?.enabled !== false && <AritcleCard />}
+        {cardStyles.likePosition?.enabled !== false && <LikePosition />}
+
+        {/* 电脑端组件：原始逻辑无改动 */}
+        {!maxSM && cardStyles.artCard?.enabled !== false && <ArtCard />}
+        {!maxSM && cardStyles.clockCard?.enabled !== false && <ClockCard />}
+        {!maxSM && cardStyles.calendarCard?.enabled !== false && <CalendarCard />}
+        {!maxSM && cardStyles.musicPlayer?.enabled !== false && (
+          <motion.div
+            ref={playerRef}
+            data-id="musicPlayer"
+            style={{
+              position: 'absolute',
+              top: cardStyles.musicPlayer.top || 0,
+              left: cardStyles.musicPlayer.left || 0,
+              width: cardStyles.musicPlayer.width || 320,
+              height: cardStyles.musicPlayer.height || 65,
+              borderRadius: 12,
+              zIndex: 10,
+              userSelect: 'none',
+              touchAction: 'none',
+            }}
+            dragControls={dragControls}
+            drag={editing}
+            dragConstraints={getConstraints()}
+            dragElastic={0}
+            dragMomentum={false}
+            dragScale={1}
+            onDragEnd={handleDragEnd}
+            whileDrag={{ boxShadow: '0 8px 20px rgba(0,0,0,0.15)' }}
+          >
+            <div style={{ width: '100%', height: '100%', pointerEvents: 'auto' }}>
+              <MusicPlayer style={{ width: '100%', height: '100%' }} />
+            </div>
+            {editing && (
+              <div 
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  right: 0,
+                  width: 24,
+                  height: 24,
+                  backgroundColor: 'rgba(64, 150, 255, 0.8)',
+                  borderRadius: '0 12px 0 8px',
+                  cursor: 'move',
+                  pointerEvents: 'auto',
+                  zIndex: 11,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'white',
+                  fontSize: 12
+                }}
+                onMouseDown={handleDragStart}
+                title="拖拽调整位置"
+              >
+                ☰
+              </div>
+            )}
+          </motion.div>
+        )}
+        {!maxSM && cardStyles.musicCard?.enabled !== false && <MusicCard />}
+        {!maxSM && cardStyles.shareCard?.enabled !== false && <ShareCard />}
+        {!maxSM && cardStyles.writeButtons?.enabled !== false && <WriteButtons />}
+        {cardStyles.hatCard?.enabled !== false && <HatCard />}
+        {cardStyles.beianCard?.enabled !== false && <BeianCard />}
       </div>
 
-      {/* 2. 图一的GitHub/dy/邮件按钮栏 */}
-      <div style={{ width: '95%', marginBottom: '2px' }}>
-        {/* 粘贴你SocialButtons的原始代码 */}
-        <div>
-          <button>GitHub</button>
-          <button>dy</button>
-          <button>邮件</button>
-        </div>
-      </div>
-
-      {/* 3. 播放器（调宽，无其他改动） */}
-      <div style={{ width: '95%', height: '45px', marginBottom: '2px' }}>
-        <div style={{ width: '100%', height: '100%' }}>
-          {/* 粘贴你MusicPlayer的原始代码 */}
-          <div>MAMA - EXO-K</div>
-          <button>播放</button>
-        </div>
-      </div>
-
-      {/* 4. 图一的最新文章卡片 */}
-      <div style={{ width: '95%', marginBottom: '2px' }}>
-        {/* 粘贴你AritcleCard的原始代码 */}
-        <div>
-          <p>最新文章</p>
-          <p>解决电脑屏幕帧数问题</p>
-          <p>2025/12/18</p>
-        </div>
-      </div>
-
-      {/* 5. 图一的爱心按钮 */}
-      <div style={{ width: '95%' }}>
-        {/* 粘贴你LikePosition的原始代码 */}
-        <button style={{ borderRadius: '50%', width: '40px', height: '40px' }}>❤️</button>
-      </div>
-    </div>
+      {siteContent.enableChristmas && <SnowfallBackground zIndex={2} count={!maxSM ? 125 : 20} />}
+      <ConfigDialog open={configDialogOpen} onClose={() => setConfigDialogOpen(false)} />
+    </>
   )
 }
