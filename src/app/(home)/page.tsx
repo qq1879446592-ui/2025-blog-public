@@ -19,7 +19,7 @@ import { useLayoutEditStore } from './stores/layout-edit-store'
 import { useConfigStore } from './stores/config-store'
 import { toast } from 'sonner'
 import ConfigDialog from './config-dialog/index'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import SnowfallBackground from '@/layout/backgrounds/snowfall'
 
 export default function Home() {
@@ -29,18 +29,18 @@ export default function Home() {
   const saveEditing = useLayoutEditStore(state => state.saveEditing)
   const cancelEditing = useLayoutEditStore(state => state.cancelEditing)
   
-  // 解决 window is not defined 报错：用状态存储窗口尺寸，仅在浏览器端初始化
+  // 解决 window is not defined 报错 + 初始化窗口尺寸
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 })
+  // 拖拽控制：强制重置拖拽状态
+  const [dragKey, setDragKey] = useState(0)
 
   useEffect(() => {
-    // 仅在浏览器环境执行（Next.js 预渲染/服务端渲染时不会执行）
     if (typeof window !== 'undefined') {
       setWindowSize({
         width: window.innerWidth,
         height: window.innerHeight
       })
 
-      // 监听窗口大小变化
       const handleResize = () => {
         setWindowSize({
           width: window.innerWidth,
@@ -52,6 +52,25 @@ export default function Home() {
     }
   }, [])
 
+  // 修复：拖拽结束后强制重置状态（解决粘鼠标）
+  const handleDragEnd = useCallback((_, info) => {
+    // 1. 更新播放器位置
+    setCardStyles({
+      ...cardStyles,
+      musicPlayer: {
+        ...cardStyles.musicPlayer,
+        top: Math.max(0, info.offset.y), // 限制top不小于0
+        left: Math.max(0, info.offset.x), // 限制left不小于0
+      },
+    });
+    // 2. 强制重置拖拽状态（核心：解决粘鼠标）
+    setDragKey(prev => prev + 1)
+    // 3. 编辑状态下才保存，非编辑状态禁止拖拽
+    if (!editing) {
+      toast.info('请进入编辑模式后调整布局')
+    }
+  }, [cardStyles, setCardStyles, editing])
+
   const handleSave = () => {
     saveEditing()
     toast.success('首页布局偏移已保存（尚未提交到远程配置）')
@@ -59,6 +78,7 @@ export default function Home() {
 
   const handleCancel = () => {
     cancelEditing()
+    setDragKey(0) // 重置拖拽状态
     toast.info('已取消此次拖拽布局修改')
   }
 
@@ -78,9 +98,11 @@ export default function Home() {
     }
   }, [setConfigDialogOpen])
 
-  // 计算音乐播放器拖拽约束（避免硬编码 + 解决 window 未定义）
+  // 修复：拖拽约束兜底（避免尺寸为0导致约束失效）
   const getMusicPlayerConstraints = () => {
-    if (windowSize.width === 0 || windowSize.height === 0) return { top: 0, left: 0, right: 0, bottom: 0 }
+    if (windowSize.width === 0 || windowSize.height === 0) {
+      return { top: 0, left: 0, right: 1000, bottom: 1000 } // 兜底值
+    }
     const playerWidth = cardStyles.musicPlayer?.width || 320
     const playerHeight = cardStyles.musicPlayer?.height || 65
     return {
@@ -122,7 +144,9 @@ export default function Home() {
         {!maxSM && cardStyles.clockCard?.enabled !== false && <ClockCard />}
         {!maxSM && cardStyles.calendarCard?.enabled !== false && <CalendarCard />}
         {!maxSM && cardStyles.musicPlayer?.enabled !== false && (
+          // 核心修复1：添加key强制重置拖拽状态 + 仅编辑模式可拖拽
           <motion.div
+            key={`music-player-${dragKey}`}
             data-id="musicPlayer"
             style={{
               position: 'absolute',
@@ -132,27 +156,24 @@ export default function Home() {
               height: cardStyles.musicPlayer.height || 65,
               borderRadius: 12,
               zIndex: 10,
+              pointerEvents: editing ? 'auto' : 'none', // 核心修复2：非编辑模式禁止拖拽
             }}
-            drag
+            drag={editing} // 核心修复3：仅编辑模式开启拖拽
             dragConstraints={getMusicPlayerConstraints()}
             dragScale={1.02}
-            onDragEnd={(_, info) => {
-              setCardStyles({
-                ...cardStyles,
-                musicPlayer: {
-                  ...cardStyles.musicPlayer,
-                  top: info.offset.y,
-                  left: info.offset.x,
-                },
-              });
-            }}
-            whileHover={{ cursor: 'move' }}
+            dragElastic={0.05} // 核心修复4：降低拖拽弹性，避免粘滞
+            onDragEnd={handleDragEnd}
+            whileHover={{ cursor: editing ? 'move' : 'default' }}
             whileDrag={{
               boxShadow: '0 10px 30px rgba(0,0,0,0.2)',
               scale: 1.05,
+              pointerEvents: 'none', // 核心修复5：拖拽时禁止内部元素劫持事件
             }}
           >
-            <MusicPlayer />
+            {/* 核心修复6：播放器外层加pointer-events，避免内部元素干扰 */}
+            <div style={{ pointerEvents: 'auto', width: '100%', height: '100%' }}>
+              <MusicPlayer />
+            </div>
           </motion.div>
         )}
         {!maxSM && cardStyles.musicCard?.enabled !== false && <MusicCard />}
