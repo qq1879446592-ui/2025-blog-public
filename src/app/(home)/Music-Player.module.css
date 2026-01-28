@@ -1,36 +1,37 @@
 .playerContainer {
+  /* 毛玻璃核心效果（必须保留这3行） */
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
+  
+  /* 固定尺寸（解决长度异常） */
+  width: 320px !important; /* 强制固定宽度，和iframe一致 */
+  height: 65px !important; /* 强制固定高度，和iframe一致 */
+  
+  /* 基础样式（无强制定位，只保基础） */
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  
-  /* 只保留基础样式，删掉所有!important和强制定位 */
   padding: 0;
   margin: 0;
-  width: 100%;
-  height: 65px;
   line-height: 0;
-  vertical-align: top;
-  
-  position: relative; /* 只保留relative，让外部定位生效 */
+  position: relative; /* 保留relative，不影响定位 */
   overflow: hidden;
   transition: all 0.2s ease-in-out;
   cursor: zoom-in;
-  display: inline-block;
+  display: inline-block; /* 行内块，不独占一行 */
 }
 
 .playerContainer:hover {
   transform: scale(1.01);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.25); /* 悬浮毛玻璃更明显 */
 }
 
 .playerIframe {
   border: none;
   border-radius: 12px;
-  width: 100%;
-  height: 65px;
+  width: 100% !important; /* iframe铺满容器 */
+  height: 65px !important;
   display: block;
   line-height: 0;
 }
