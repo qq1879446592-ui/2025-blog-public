@@ -1,18 +1,18 @@
-/* 播放器容器：满血恢复毛玻璃 + 强化悬浮效果 + 固定尺寸 */
+/* 播放器容器：保留所有核心效果 + 新增拖拽标识 */
 .playerContainer {
-  /* 毛玻璃拉满（比之前更明显，和页面其他卡片一致） */
-  background: rgba(255, 255, 255, 0.3) !important; /* 透明度提高，毛玻璃更明显 */
-  backdrop-filter: blur(12px) !important; /* 模糊度拉满，和页面其他卡片对齐 */
+  /* 毛玻璃核心（保留+强化） */
+  background: rgba(255, 255, 255, 0.3) !important;
+  backdrop-filter: blur(12px) !important;
   -webkit-backdrop-filter: blur(12px) !important;
-  -moz-backdrop-filter: blur(12px) !important; /* 兼容火狐 */
+  -moz-backdrop-filter: blur(12px) !important;
   
-  /* 固定尺寸（和QQ音乐iframe完全匹配，绝不拉伸） */
+  /* 固定尺寸（保留） */
   width: 320px !important;
   height: 65px !important;
   
-  /* 基础样式（保留圆角/阴影） */
+  /* 基础样式（保留） */
   border-radius: 12px !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important; /* 基础阴影加重 */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
   padding: 0 !important;
   margin: 0 !important;
   line-height: 0 !important;
@@ -20,20 +20,18 @@
   overflow: hidden !important;
   cursor: zoom-in !important;
   display: inline-block !important;
-  
-  /* 过渡动画拉满（悬浮更丝滑） */
   transition: all 0.3s ease-in-out !important;
 }
 
-/* 悬浮突出效果（幅度拉满，比之前更明显） */
+/* 悬浮突出（保留+强化） */
 .playerContainer:hover {
-  transform: scale(1.08) !important; /* 放大幅度从1.01→1.08，突出感拉满 */
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18) !important; /* 阴影大幅加重，突出感强 */
-  background: rgba(255, 255, 255, 0.4) !important; /* 悬浮时毛玻璃更实，对比更明显 */
-  border: 1px solid rgba(255, 255, 255, 0.5) !important; /* 加边框，强化突出 */
+  transform: scale(1.08) !important;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18) !important;
+  background: rgba(255, 255, 255, 0.4) !important;
+  border: 1px solid rgba(255, 255, 255, 0.5) !important;
 }
 
-/* iframe样式（完全贴合容器） */
+/* iframe样式（保留） */
 .playerIframe {
   border: none !important;
   border-radius: 12px !important;
@@ -42,4 +40,25 @@
   display: block !important;
   line-height: 0 !important;
   transition: all 0.3s ease-in-out !important;
+}
+
+/* 新增：拖拽标识（和其他卡片一致的右上角小圆点） */
+.playerContainer::before {
+  content: '';
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
+  z-index: 999;
+  cursor: move;
+}
+
+/* 拖拽时标识高亮（新增，和其他卡片一致） */
+.playerContainer:active::before {
+  background: rgba(0, 191, 255, 0.9);
+  box-shadow: 0 0 6px rgba(0, 191, 255, 0.6);
 }
