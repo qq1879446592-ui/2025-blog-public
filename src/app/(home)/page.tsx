@@ -19,121 +19,154 @@ import { useLayoutEditStore } from './stores/layout-edit-store'
 import { useConfigStore } from './stores/config-store'
 import { toast } from 'sonner'
 import ConfigDialog from './config-dialog/index'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import SnowfallBackground from '@/layout/backgrounds/snowfall'
 
 export default function Home() {
-	const { maxSM } = useSize()
-	const { cardStyles, configDialogOpen, setConfigDialogOpen, siteContent, setCardStyles } = useConfigStore()
-	const editing = useLayoutEditStore(state => state.editing)
-	const saveEditing = useLayoutEditStore(state => state.saveEditing)
-	const cancelEditing = useLayoutEditStore(state => state.cancelEditing)
+  const { maxSM } = useSize()
+  const { cardStyles, configDialogOpen, setConfigDialogOpen, siteContent, setCardStyles } = useConfigStore()
+  const editing = useLayoutEditStore(state => state.editing)
+  const saveEditing = useLayoutEditStore(state => state.saveEditing)
+  const cancelEditing = useLayoutEditStore(state => state.cancelEditing)
+  
+  // 解决 window is not defined 报错：用状态存储窗口尺寸，仅在浏览器端初始化
+  const [windowSize, setWindowSize] = useState({ width: 0, height: 0 })
 
-	const handleSave = () => {
-		saveEditing()
-		toast.success('首页布局偏移已保存（尚未提交到远程配置）')
-	}
+  useEffect(() => {
+    // 仅在浏览器环境执行（Next.js 预渲染/服务端渲染时不会执行）
+    if (typeof window !== 'undefined') {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight
+      })
 
-	const handleCancel = () => {
-		cancelEditing()
-		toast.info('已取消此次拖拽布局修改')
-	}
+      // 监听窗口大小变化
+      const handleResize = () => {
+        setWindowSize({
+          width: window.innerWidth,
+          height: window.innerHeight
+        })
+      }
+      window.addEventListener('resize', handleResize)
+      return () => window.removeEventListener('resize', handleResize)
+    }
+  }, [])
 
-	useEffect(() => {
-		const handleKeyDown = (e: KeyboardEvent) => {
-			if ((e.ctrlKey || e.metaKey) && (e.key === 'l' || e.key === ',')) {
-				e.preventDefault()
-				setConfigDialogOpen(true)
-			}
-		}
+  const handleSave = () => {
+    saveEditing()
+    toast.success('首页布局偏移已保存（尚未提交到远程配置）')
+  }
 
-		window.addEventListener('keydown', handleKeyDown)
-		return () => {
-			window.removeEventListener('keydown', handleKeyDown)
-		}
-	}, [setConfigDialogOpen])
+  const handleCancel = () => {
+    cancelEditing()
+    toast.info('已取消此次拖拽布局修改')
+  }
 
-	return (
-		<>
-			{siteContent.enableChristmas && <SnowfallBackground zIndex={0} count={!maxSM ? 125 : 20} />}
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && (e.key === 'l' || e.key === ',')) {
+        e.preventDefault()
+        setConfigDialogOpen(true)
+      }
+    }
 
-			{editing && (
-				<div className='pointer-events-none fixed inset-x-0 top-0 z-50 flex justify-center pt-6'>
-					<div className='pointer-events-auto flex items-center gap-3 rounded-2xl bg-white/80 px-4 py-2 shadow-lg backdrop-blur'>
-						<span className='text-xs text-gray-600'>正在编辑首页布局，拖拽卡片调整位置</span>
-						<div className='flex gap-2'>
-							<motion.button
-								type='button'
-								whileHover={{ scale: 1.05 }}
-								whileTap={{ scale: 0.95 }}
-								onClick={handleCancel}
-								className='rounded-xl border bg-white px-3 py-1 text-xs font-medium text-gray-700'>
-								取消
-							</motion.button>
-							<motion.button type='button' whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={handleSave} className='brand-btn px-3 py-1 text-xs'>
-								保存偏移
-							</motion.button>
-						</div>
-					</div>
-				</div>
-			)}
+    if (typeof window !== 'undefined') {
+      window.addEventListener('keydown', handleKeyDown)
+      return () => {
+        window.removeEventListener('keydown', handleKeyDown)
+      }
+    }
+  }, [setConfigDialogOpen])
 
-			<div className='max-sm:flex max-sm:flex-col max-sm:items-center max-sm:gap-6 max-sm:pt-28 max-sm:pb-20'>
-				{cardStyles.artCard?.enabled !== false && <ArtCard />}
-				{cardStyles.hiCard?.enabled !== false && <HiCard />}
-				{!maxSM && cardStyles.clockCard?.enabled !== false && <ClockCard />}
-				{!maxSM && cardStyles.calendarCard?.enabled !== false && <CalendarCard />}
-			    {!maxSM && cardStyles.musicPlayer?.enabled !== false && (
-  		          <motion.div
-  		            data-id="musicPlayer"
-  		            style={{
-  		              position: 'absolute',
-  		              top: cardStyles.musicPlayer.top || 0,
-  		              left: cardStyles.musicPlayer.left || 0,
-  		              width: cardStyles.musicPlayer.width || 320,
-  		              height: cardStyles.musicPlayer.height || 65,
-  		              borderRadius: 12,
-  		              zIndex: 10,
-  		            }}
-  		            drag
-  		            dragConstraints={{ 
-  		              top: 0,
-  		              left: 0,
-  		              right: window.innerWidth - (cardStyles.musicPlayer.width || 320),
-  		              bottom: window.innerHeight - (cardStyles.musicPlayer.height || 65)
-  		            }}
-  		            dragScale={1.02}
-  		            onDragEnd={(_, info) => {
-  		              setCardStyles({
-  		                ...cardStyles,
-  		                musicPlayer: {
-  		                  ...cardStyles.musicPlayer,
-  		                  top: info.offset.y,
-  		                  left: info.offset.x,
-  		                },
-        		      });
-  		            }}
-  		            whileHover={{ cursor: 'move' }}
-  		            whileDrag={{
-  		              boxShadow: '0 10px 30px rgba(0,0,0,0.2)',
-  		              scale: 1.05,
-  		            }}
-  		          >
-  		            <MusicPlayer />
-  		          </motion.div>
-  		        )}
-                {!maxSM && cardStyles.musicCard?.enabled !== false && <MusicCard />}
-				{cardStyles.socialButtons?.enabled !== false && <SocialButtons />}
-				{!maxSM && cardStyles.shareCard?.enabled !== false && <ShareCard />}
-				{cardStyles.articleCard?.enabled !== false && <AritcleCard />}
-				{!maxSM && cardStyles.writeButtons?.enabled !== false && <WriteButtons />}
-				{cardStyles.likePosition?.enabled !== false && <LikePosition />}
-				{cardStyles.hatCard?.enabled !== false && <HatCard />}
-				{cardStyles.beianCard?.enabled !== false && <BeianCard />}
-			</div>
+  // 计算音乐播放器拖拽约束（避免硬编码 + 解决 window 未定义）
+  const getMusicPlayerConstraints = () => {
+    if (windowSize.width === 0 || windowSize.height === 0) return { top: 0, left: 0, right: 0, bottom: 0 }
+    const playerWidth = cardStyles.musicPlayer?.width || 320
+    const playerHeight = cardStyles.musicPlayer?.height || 65
+    return {
+      top: 0,
+      left: 0,
+      right: windowSize.width - playerWidth,
+      bottom: windowSize.height - playerHeight
+    }
+  }
 
-			{siteContent.enableChristmas && <SnowfallBackground zIndex={2} count={!maxSM ? 125 : 20} />}
-			<ConfigDialog open={configDialogOpen} onClose={() => setConfigDialogOpen(false)} />
-		</>
-	)
+  return (
+    <>
+      {siteContent.enableChristmas && <SnowfallBackground zIndex={0} count={!maxSM ? 125 : 20} />}
+
+      {editing && (
+        <div className='pointer-events-none fixed inset-x-0 top-0 z-50 flex justify-center pt-6'>
+          <div className='pointer-events-auto flex items-center gap-3 rounded-2xl bg-white/80 px-4 py-2 shadow-lg backdrop-blur'>
+            <span className='text-xs text-gray-600'>正在编辑首页布局，拖拽卡片调整位置</span>
+            <div className='flex gap-2'>
+              <motion.button
+                type='button'
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleCancel}
+                className='rounded-xl border bg-white px-3 py-1 text-xs font-medium text-gray-700'>
+                取消
+              </motion.button>
+              <motion.button type='button' whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={handleSave} className='brand-btn px-3 py-1 text-xs'>
+                保存偏移
+              </motion.button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className='max-sm:flex max-sm:flex-col max-sm:items-center max-sm:gap-6 max-sm:pt-28 max-sm:pb-20'>
+        {cardStyles.artCard?.enabled !== false && <ArtCard />}
+        {cardStyles.hiCard?.enabled !== false && <HiCard />}
+        {!maxSM && cardStyles.clockCard?.enabled !== false && <ClockCard />}
+        {!maxSM && cardStyles.calendarCard?.enabled !== false && <CalendarCard />}
+        {!maxSM && cardStyles.musicPlayer?.enabled !== false && (
+          <motion.div
+            data-id="musicPlayer"
+            style={{
+              position: 'absolute',
+              top: cardStyles.musicPlayer.top || 0,
+              left: cardStyles.musicPlayer.left || 0,
+              width: cardStyles.musicPlayer.width || 320,
+              height: cardStyles.musicPlayer.height || 65,
+              borderRadius: 12,
+              zIndex: 10,
+            }}
+            drag
+            dragConstraints={getMusicPlayerConstraints()}
+            dragScale={1.02}
+            onDragEnd={(_, info) => {
+              setCardStyles({
+                ...cardStyles,
+                musicPlayer: {
+                  ...cardStyles.musicPlayer,
+                  top: info.offset.y,
+                  left: info.offset.x,
+                },
+              });
+            }}
+            whileHover={{ cursor: 'move' }}
+            whileDrag={{
+              boxShadow: '0 10px 30px rgba(0,0,0,0.2)',
+              scale: 1.05,
+            }}
+          >
+            <MusicPlayer />
+          </motion.div>
+        )}
+        {!maxSM && cardStyles.musicCard?.enabled !== false && <MusicCard />}
+        {cardStyles.socialButtons?.enabled !== false && <SocialButtons />}
+        {!maxSM && cardStyles.shareCard?.enabled !== false && <ShareCard />}
+        {cardStyles.articleCard?.enabled !== false && <AritcleCard />}
+        {!maxSM && cardStyles.writeButtons?.enabled !== false && <WriteButtons />}
+        {cardStyles.likePosition?.enabled !== false && <LikePosition />}
+        {cardStyles.hatCard?.enabled !== false && <HatCard />}
+        {cardStyles.beianCard?.enabled !== false && <BeianCard />}
+      </div>
+
+      {siteContent.enableChristmas && <SnowfallBackground zIndex={2} count={!maxSM ? 125 : 20} />}
+      <ConfigDialog open={configDialogOpen} onClose={() => setConfigDialogOpen(false)} />
+    </>
+  )
 }
