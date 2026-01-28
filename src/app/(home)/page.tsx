@@ -1,16 +1,16 @@
 'use client'
 
-import HiCard from '@/app/(home)/hi-card' // 头像+问候语
+import HiCard from '@/app/(home)/hi-card' 
 import ArtCard from '@/app/(home)/art-card'
 import ClockCard from '@/app/(home)/clock-card'
 import CalendarCard from '@/app/(home)/calendar-card'
 import MusicPlayer from '@/app/(home)/Music-Player'
 import MusicCard from '@/app/(home)/music-card'
-import SocialButtons from '@/app/(home)/social-buttons' // GitHub/dy/邮件
+import SocialButtons from '@/app/(home)/social-buttons' 
 import ShareCard from '@/app/(home)/share-card'
-import AritcleCard from '@/app/(home)/aritcle-card' // 最新文章
+import AritcleCard from '@/app/(home)/aritcle-card' 
 import WriteButtons from '@/app/(home)/write-buttons'
-import LikePosition from './like-position' // 爱心按钮
+import LikePosition from './like-position' 
 import HatCard from './hat-card'
 import BeianCard from './beian-card'
 import { useSize } from '@/hooks/use-size'
@@ -23,13 +23,13 @@ import { useEffect, useState, useCallback, useRef } from 'react'
 import SnowfallBackground from '@/layout/backgrounds/snowfall'
 
 export default function Home() {
-  const { maxSM } = useSize() // 手机端标识
+  const { maxSM } = useSize() 
   const { cardStyles, configDialogOpen, setConfigDialogOpen, siteContent, setCardStyles } = useConfigStore()
   const editing = useLayoutEditStore(state => state.editing)
   const saveEditing = useLayoutEditStore(state => state.saveEditing)
   const cancelEditing = useLayoutEditStore(state => state.cancelEditing)
   
-  // 电脑端拖拽逻辑（保持不变）
+  // 电脑端拖拽逻辑（保留，不影响手机端）
   const dragControls = useDragControls()
   const isDragging = useRef(false)
   const playerRef = useRef<HTMLDivElement>(null)
@@ -38,7 +38,6 @@ export default function Home() {
     height: typeof window !== 'undefined' ? window.innerHeight : 1080 
   })
 
-  // 电脑端拖拽相关（保持不变）
   useEffect(() => {
     if (typeof window === 'undefined') return
     const handleResize = () => setWindowSize({ width: window.innerWidth, height: window.innerHeight })
@@ -138,47 +137,50 @@ export default function Home() {
         </div>
       )}
 
-      {/* 页面主体：解决顶部空白+重叠+尺寸问题 */}
-      <div className='max-sm:flex max-sm:flex-col max-sm:items-center max-sm:gap-3 max-sm:pt-6 max-sm:pb-12'>
-        {/* 1. 头像+问候语（无重叠，紧凑显示） */}
+      {/* ========== 手机端1:1复刻截图布局 ========== */}
+      <div className='max-sm:w-full max-sm:min-h-screen max-sm:flex max-sm:flex-col max-sm:items-center max-sm:px-4 max-sm:pt-4 max-sm:pb-8'>
+        {/* 1. 头像+问候语（和截图位置/尺寸完全匹配） */}
         {cardStyles.hiCard?.enabled !== false && (
-          <div style={{ width: '90%', marginTop: 2 }}>
+          <div className='max-sm:w-full max-sm:mb-2'>
             <HiCard />
           </div>
         )}
 
-        {/* 2. GitHub/dy/邮件按钮（与问候语紧凑衔接） */}
+        {/* 2. GitHub/抖音/邮件按钮（宽度100%，无间距） */}
         {cardStyles.socialButtons?.enabled !== false && (
-          <div style={{ width: '90%' }}>
+          <div className='max-sm:w-full max-sm:mb-1'>
             <SocialButtons />
           </div>
         )}
 
-        {/* 3. 手机端播放器（尺寸适配+无重叠） */}
+        {/* 3. 音乐播放器（尺寸/位置完全匹配截图） */}
         {maxSM && cardStyles.musicPlayer?.enabled !== false && (
           <div style={{
-            width: '90%', // 和按钮/问候语宽度一致
-            height: 58, // 适配手机端的紧凑尺寸
-            marginTop: 6, // 与上方按钮间距适中
-            marginBottom: 6, // 与下方文章间距适中
-            borderRadius: 12,
+            width: '100%',
+            height: 48, // 精准匹配截图播放器高度
+            marginBottom: 3, // 与下方文章的间距
+            borderRadius: 8, // 截图里的圆角
             overflow: 'hidden'
           }}>
             <MusicPlayer style={{ width: '100%', height: '100%' }} />
           </div>
         )}
 
-        {/* 4. 最新文章（与播放器无重叠） */}
+        {/* 4. 最新文章卡片（宽度100%，无重叠） */}
         {cardStyles.articleCard?.enabled !== false && (
-          <div style={{ width: '90%' }}>
+          <div className='max-sm:w-full max-sm:mb-2'>
             <AritcleCard />
           </div>
         )}
 
-        {/* 5. 爱心按钮（紧凑显示） */}
-        {cardStyles.likePosition?.enabled !== false && <LikePosition />}
+        {/* 5. 爱心按钮（原位显示） */}
+        {cardStyles.likePosition?.enabled !== false && (
+          <div className='max-sm:w-full'>
+            <LikePosition />
+          </div>
+        )}
 
-        {/* 电脑端专属组件（保持不变） */}
+        {/* ========== 电脑端组件（完全保留，不改动） ========== */}
         {!maxSM && cardStyles.artCard?.enabled !== false && <ArtCard />}
         {!maxSM && cardStyles.clockCard?.enabled !== false && <ClockCard />}
         {!maxSM && cardStyles.calendarCard?.enabled !== false && <CalendarCard />}
