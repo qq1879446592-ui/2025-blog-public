@@ -11,8 +11,8 @@
 		"width": 360,
 		"height": 288,
 		"order": 1,
-		"offsetX": -152,
-		"offsetY": -179,
+		"offsetX": -179,
+		"offsetY": -158,
 		"enabled": true
 	},
 	"clockCard": {
@@ -103,7 +103,7 @@
 		"height": 105,
 		"order": 10,
 		"offsetX": -48,
-		"offsetY": -168,
+		"offsetY": -180,
 		"enabled": true
 	},
 	"beianCard": {
