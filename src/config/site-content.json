@@ -55,8 +55,8 @@
 	"socialButtons": [
 		{
 			"id": "github",
-			"type": "github",
-			"value": "https://github.com/yysuni",
+			"type": "bilibili",
+			"value": "https://space.bilibili.com/1203514830?spm_id_from=333.33.0.0",
 			"label": "Github",
 			"order": 3
 		},
