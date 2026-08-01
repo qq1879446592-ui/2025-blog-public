@@ -104,7 +104,7 @@
 		"order": 10,
 		"offsetX": -48,
 		"offsetY": -180,
-		"enabled": true
+		"enabled": false
 	},
 	"beianCard": {
 		"width": 200,
