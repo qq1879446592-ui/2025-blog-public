@@ -5,6 +5,7 @@ import Layout from '@/layout'
 import Head from '@/layout/head'
 import siteContent from '@/config/site-content.json'
 import MusicPlayer from '@/app/(home)/Music-Player.tsx';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 const {
 	meta: { title, description },
@@ -60,6 +61,7 @@ export default function RootLayout({
         />
 
         <Layout>{children}</Layout>
+        <SpeedInsights />
       </body>
     </html>
   );
