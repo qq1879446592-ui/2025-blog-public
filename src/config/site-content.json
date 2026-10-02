@@ -1,8 +1,8 @@
 {
 	"meta": {
-		"title": "YYsuni",
-		"description": "YYsuni 的个人博客，记录前端开发、探索、笔记。前端 UI 更新代码仓库。",
-		"username": "Suni"
+		"title": "方柒",
+		"description": "方柒 的个人博客，记录前端开发、探索、笔记。前端 UI 更新代码仓库。",
+		"username": "方柒"
 	},
 	"theme": {
 		"colorBrand": "#2fcbe7",
@@ -38,28 +38,32 @@
 		{
 			"id": "",
 			"url": ""
+		},
+		{
+			"id": "7f48e707a9175515",
+			"url": "/images/background/7f48e707a9175515.png"
 		}
 	],
-	"currentBackgroundImageId": "",
+	"currentBackgroundImageId": "7f48e707a9175515",
 	"socialButtons": [
 		{
 			"id": "github",
-			"type": "github",
-			"value": "https://github.com/yysuni",
-			"label": "Github",
+			"type": "tiktok",
+			"value": "https://v.douyin.com/j-5GSAy4jcs/ ",
+			"label": "TikTok",
 			"order": 3
 		},
 		{
 			"id": "juejin",
-			"type": "juejin",
-			"value": "https://juejin.cn/user/2427311675422382",
-			"label": "稀土掘金",
+			"type": "github",
+			"value": "https://github.com/qq1879446592-ui",
+			"label": "Github",
 			"order": 2
 		},
 		{
 			"id": "email",
 			"type": "email",
-			"value": "yysuni1001@gmail.com",
+			"value": "2285360379@qq.com",
 			"label": "",
 			"order": 1
 		}
