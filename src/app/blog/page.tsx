@@ -13,7 +13,7 @@ import ShortLineSVG from '@/svgs/short-line.svg'
 import { useBlogIndex, type BlogIndexItem } from '@/hooks/use-blog-index'
 import { useCategories } from '@/hooks/use-categories'
 import { useReadArticles } from '@/hooks/use-read-articles'
-import tiktoksvg from '@/svgs/tiktok.svg'
+import TiktokSVG from '@/svgs/tiktok.svg'
 import { useAuthStore } from '@/hooks/use-auth'
 import { useConfigStore } from '@/app/(home)/stores/config-store'
 import { readFileAsText } from '@/lib/file-utils'
@@ -459,7 +459,7 @@ export default function BlogPage() {
 							href='https://v.douyin.com/j-5GSAy4jcs/'
 							target='_blank'
 							className='card text-secondary static inline-flex items-center gap-2 rounded-xl px-4 py-2 text-xs'>
-							<tiktoksvg className='h-4 w-4' />
+							<TiktokSVG className='h-4 w-4' />
 							更多
 						</motion.a>
 					</div>
